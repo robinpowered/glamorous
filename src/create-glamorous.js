@@ -27,8 +27,6 @@ function createGlamorous(splitProps) {
   * @return {Function} the glamorousComponentFactory
   */
   function glamorous(comp, {rootEl, displayName, forwardProps = []} = {}) {
-    return glamorousComponentFactory
-
     /**
      * This returns a React Component that renders the comp (closure)
      * with a className based on the given glamor styles object(s)
@@ -161,6 +159,45 @@ function createGlamorous(splitProps) {
       )
       return GlamorousComponent
     }
+
+    /**
+     * This returns a higher order glamorousComponentFactory that will
+     * be composed with the provided properties.
+     *
+     * @param {...Object|Function} outerProps the properties to provide to the
+     *  GlamorousComponent.
+     *  If any of these are functions, they will be invoked with the component
+     *  props and the return value is used.
+     * @return {Function} the glamorousComponentFactory function.
+     */
+    glamorousComponentFactory.withProps = (...outerProps) => {
+      // This is a higher order function of `glamorousComponentFactory`
+      return (...styles) => {
+        // Create the glamorous component with the provided styles.
+        const GlamorousComponent = glamorousComponentFactory(...styles)
+
+        // A higher order component of the GlamorousComponent. This will
+        // evaluate the properties from withProps.
+        return function GlamorousComponentWithProps(innerProps) {
+          // Take the properties provided to the GlamorousComponent and evaluate
+          // the properties from `withProps`
+          const evalutatedOuterProps = outerProps.reduce((props, prop) => {
+            const evaluated = typeof prop === 'function' ?
+              prop(innerProps) :
+              prop
+            return {...props, ...evaluated}
+          }, {})
+
+          // Decorate the GlamorousComponent with the evaluated props and the
+          // provided props.
+          return (
+            <GlamorousComponent {...evalutatedOuterProps} {...innerProps} />
+          )
+        }
+      }
+    }
+
+    return glamorousComponentFactory
   }
 
   function getGlamorousComponentMetadata({

@@ -433,3 +433,24 @@ test('should accept user defined contextTypes', () => {
   const props = {}
   expect(dynamicStyles).toHaveBeenCalledWith(props, theme, context)
 })
+
+it('should compose a component withProps', () => {
+  const Input = glamorous.input.withProps({type: 'text'})({color: 'red'})
+  expect(render(<Input />)).toMatchSnapshotWithGlamor()
+})
+
+it('should compose a component withProps as a function', () => {
+  const propsFn = ({validationType}) => {
+    const extraProps = {type: validationType}
+
+    if (validationType === 'credit-card') {
+      extraProps.pattern = /[0-9]/
+    }
+
+    return extraProps
+  }
+  const Input = glamorous.input.withProps(propsFn)({color: 'red'})
+  expect(
+    render(<Input validationType="credit-card" />),
+  ).toMatchSnapshotWithGlamor()
+})

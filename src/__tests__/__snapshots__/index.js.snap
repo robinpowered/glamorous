@@ -149,6 +149,31 @@ exports[`sanity test 1`] = `
 />
 `;
 
+exports[`should compose a component withProps 1`] = `
+.css-1ezp9xe,
+[data-css-1ezp9xe] {
+  color: red;
+}
+
+<input
+  class="css-1ezp9xe"
+  type="text"
+/>
+`;
+
+exports[`should compose a component withProps as a function 1`] = `
+.css-1ezp9xe,
+[data-css-1ezp9xe] {
+  color: red;
+}
+
+<input
+  class="css-1ezp9xe"
+  pattern="/[0-9]/"
+  type="credit-card"
+/>
+`;
+
 exports[`style objects can be arrays and glamor will merge those 1`] = `
 @media (max-width: 640px) {
   .css-1bzhvkr,
